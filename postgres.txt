@@ -1,0 +1,17 @@
+CREATE DATABASE flask;
+
+CREATE ROLE usu WITH LOGIN PASSWORD 'admin';
+
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE personas TO usu;
+GRANT USAGE, SELECT ON SEQUENCE personas_id_seq TO usu;
+
+
+
+CREATE TABLE personas (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(50),
+    apellido VARCHAR(50),
+    edad INT,
+    sexo CHAR(1)
+);
