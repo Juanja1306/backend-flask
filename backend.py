@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS #type: ignore
 import psycopg2
 import psycopg2.extras
 
 app = Flask(__name__)
-
+CORS(app)
 # Configura aquí los detalles de conexión a tu base de datos
 DB_HOST = "127.0.0.1"
 DB_NAME = "flask"
@@ -21,9 +22,13 @@ def get_personas():
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     s = "SELECT * FROM personas"
     cur.execute(s)
-    lista_personas = cur.fetchall()
+    rows = cur.fetchall()
     cur.close()
-    return jsonify(lista_personas)
+
+    # Construyendo lista de diccionarios para cada fila
+    personas_list = [{"id": row["id"], "nombre": row["nombre"], "apellido": row["apellido"], "edad": row["edad"], "sexo": row["sexo"]} for row in rows]
+
+    return jsonify(personas_list)
 
 @app.route('/persona', methods=['POST'])
 def add_persona():
@@ -49,4 +54,4 @@ def delete_persona(id):
     return jsonify(deleted_persona)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
